@@ -1,4 +1,6 @@
-# PACE AI Hub — Phase Plan (v1.3, 20/10/2026)
+# PACE AI Hub — Phase Plan (v1.4, 20/10/2026)
+> **Changelog v1.4:**
+> - ADR-016: repo giữ public đến Pilot; chuyển vào GitHub organization của PACE và đặt private trước 11/01/2027 (điều kiện vào Phase 5).
 > **Changelog v1.3:**
 > - Kickoff 20/10/2026, quy đổi W1–W15 sang lịch thật.
 > - Thêm lịch nghỉ Tết 2027 vào kế hoạch.
@@ -30,7 +32,7 @@
 ## Lịch thực tế
 | Phase | Tuần | Từ | Đến | Mốc chính |
 |---|---|---|---|---|
-| 0 | W1–W2 | 20/10/2026 | 30/10/2026 | 22/10: nhận VM · 30/10: Gate 0 + xem lại ADR-015 (public repo) |
+| 0 | W1–W2 | 20/10/2026 | 30/10/2026 | 22/10: nhận VM · 30/10: Gate 0 (ADR-015 đã dời hạn sang trước 11/01/2027, xem ADR-016) |
 | 1 | W2–W4 | 26/10/2026 | 13/11/2026 | 13/11: walking skeleton trên VM, SSO, RBAC |
 | 2 | W5–W7 | 16/11/2026 | 04/12/2026 | 04/12: demo Slice 1 (brief thật từ RSS) |
 | 3 | W8–W10 | 07/12/2026 | 25/12/2026 | 25/12: demo Slice 2 (lịch, duyệt, gửi mail, budget) |
@@ -61,7 +63,7 @@
     - Nơi lưu backup ngoài VM.
     - Entra app registration (dev + pilot) với redirect URI nội bộ.
   - **GitHub (ADR-009):**
-    - Repo private, branch protection, Environments `dev`/`pilot`.
+    - Branch protection, Environments `dev`/`pilot`. Repo private + chuyển vào organization PACE: dời sang trước Phase 5 (ADR-016).
     - GHCR private; **secret scanning + push protection bắt buộc** (đã xác nhận có).
   - Scheduler: Celery beat trên VM là mặc định. Power Automate chỉ dùng cho flow chạy được bằng standard connector.
 - **Antigravity setup:** xem `SETUP.md` — đưa specs vào `docs/specs/`, cài rules + skills, cấu hình bảo mật agent, cài skill bên thứ ba đã audit.
@@ -123,10 +125,12 @@
   - Backup mã hóa lưu ngoài VM + **restore test**.
   - Log/alert về hệ thống giám sát; runbooks (`docs/runbooks/`).
   - Hoàn thiện pipeline deploy (đã có từ Phase 1): rollback đã diễn tập, backup timer, giám sát.
+- **Chuyển repo vào GitHub organization của PACE và đặt private** theo checklist ADR-016 (đổi namespace GHCR, cấu hình deploy trên VM, branch protection, Environments). Chủ dự án thực hiện; đội hỗ trợ cập nhật cấu hình.
 - Skills: `pace-deploy-vm`, `pace-security-review`, `pace-qa-testcases`, `pace-phase-gate`.
-- **Exit:** 0 lỗ hổng High/Critical; restore test pass; runbook on-call; UAT dry-run với 2–3 user nội bộ pass; release candidate được tag.
+- **Exit:** 0 lỗ hổng High/Critical; restore test pass; runbook on-call; UAT dry-run với 2–3 user nội bộ pass; release candidate được tag; repo đã ở organization PACE và private (ADR-016).
 
 ## Phase 5 — Pilot (W13–W15)
+- **Điều kiện vào (ADR-016):** repo đã nằm trong GitHub organization của PACE và ở chế độ private; image GHCR đã chuyển namespace và đặt private. Chưa đạt thì Pilot không bắt đầu.
 - Sales (tuần 1–2) → IT (tuần 2–3); hỗ trợ hằng ngày; thu feedback chấm điểm brief.
 - **KPI gate (PRD §9):** ≥3 team, ≥10 user, ≥30 run, ≥95% scheduled success, ≥90% claim có URL kiểm chứng, 0 truy cập chéo team trái phép, chi phí ≤ budget, Sales ≥4/5 trên ≥20 brief.
 - **Exit:** `/pace-phase-gate` → báo cáo GO/NO-GO cho BOD.

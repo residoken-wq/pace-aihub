@@ -27,7 +27,7 @@
 | ADR-011 | Đội delivery gồm **4 người**; chủ dự án quyết định phân vai và là approver duy nhất | Accepted | Chủ dự án |
 | ADR-012 | Cho phép dùng **Antigravity + model của Antigravity** với mã nguồn nội bộ | Accepted | IT Security |
 | ADR-013 | Tech stack: Node 24 LTS, Next.js 16.4 / React 19.3 / Tailwind 4.3, Python 3.12 + FastAPI 0.150, PostgreSQL 17, Valkey 9.1, BFF auth tại FastAPI | **Đề xuất Accepted** sau review lần 3 (commit `53550e0`), chờ chủ dự án ký; kèm 3 việc theo dõi | Chủ dự án |
-| ADR-015 | Repo GitHub **tạm thời public** | Accepted tạm thời, chủ dự án chấp nhận rủi ro; xem lại trước 30/10/2026 | Chủ dự án |
+| ADR-015 | Repo GitHub **tạm thời public** | Accepted tạm thời, chủ dự án chấp nhận rủi ro; hạn xem lại dời sang **trước 11/01/2027** theo [ADR-016](ADR-016-repo-visibility-until-pilot.md) | Chủ dự án |
 | ADR-014 | Đưa **CMS-01** (admin console + budget dashboard) và **UI-00** (design system + AppShell) vào phạm vi P0 | Accepted | Chủ dự án (PO) |
 
 ---
@@ -122,6 +122,7 @@
   5. Secret scanning + push protection bật (repo public cũng được hỗ trợ). Nếu có secret lọt lên: **rotate ngay**, không chỉ xóa commit.
   6. Thêm `LICENSE`; khuyến nghị "All rights reserved / proprietary" nếu không chủ đích open source.
 - **Hạn xem lại:** **30/10/2026 (cuối W2)**, trước khi merge cấu hình AUTH-01 (Entra) và INF-01c (deploy lên VM). Nếu vẫn public sau mốc này, chủ dự án ký chấp nhận rủi ro lại bằng văn bản.
+  - **Cập nhật 20/10/2026:** chủ dự án quyết định giữ public đến Pilot; repo chuyển vào GitHub organization của PACE và đặt private **trước 11/01/2027**, kèm điều kiện bổ sung. Xem [ADR-016](ADR-016-repo-visibility-until-pilot.md) (văn bản chấp nhận rủi ro).
 
 ## Review ADR-013 — lần 2 (20/10/2026, commit `6c15b19`, repo `residoken-wq/pace-aihub`)
 **Kết luận: TRẢ LẠI ĐỂ SỬA.**
@@ -196,4 +197,4 @@
 **Điều kiện trước khi chạy INF-01a (`/pace-repo-bootstrap`):**
 - **R2 (chặn bootstrap):** repo vẫn dùng kit cũ. `AGENTS.md`, rule `30-frontend-nextjs`, skill `pace-repo-bootstrap` chưa có Next.js 16 / Node 24 / Valkey / quy tắc "không pin version theo trí nhớ". Phải chép đè kit v1.5 trước khi bootstrap, nếu không agent sẽ làm theo skill cũ.
 - Merge nhánh `docs/adr-013-tech-stack-review-2` vào `main` qua PR (không push thẳng).
-- R4 (chưa chặn, hạn 30/10): chuyển repo vào GitHub organization của PACE.
+- R4 (chưa chặn): chuyển repo vào GitHub organization của PACE. Hạn dời sang trước 11/01/2027 theo [ADR-016](ADR-016-repo-visibility-until-pilot.md).
