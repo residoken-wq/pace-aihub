@@ -1,0 +1,14 @@
+{
+  "name": "@pace/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OpenAPI spec and JSON Schemas shared by api and web. Generated files; do not edit by hand.",
+  "types": "src/api.d.ts",
+  "scripts": {
+    "gen": "openapi-typescript openapi.yaml -o src/api.d.ts"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3"
+  }
+}
