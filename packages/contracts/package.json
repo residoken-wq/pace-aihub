@@ -2,6 +2,7 @@
   "name": "@pace/contracts",
   "version": "0.1.0",
   "private": true,
+  "license": "UNLICENSED",
   "description": "OpenAPI spec and JSON Schemas shared by api and web. Generated files; do not edit by hand.",
   "types": "src/api.d.ts",
   "scripts": {
