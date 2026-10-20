@@ -15,3 +15,6 @@ apps/web            Next.js 16 (đang dựng, INF-01a PR-B)
 packages/contracts  OpenAPI + JSON Schema + TS types sinh tự động
 infra/              docker-compose dev
 ```
+
+## Giấy phép
+Proprietary, xem [`LICENSE`](LICENSE). Repo đang để public tạm thời (ADR-015), nhưng điều đó không cấp quyền sử dụng hay sao chép.
