@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|
 | INF-01 | NFR | infra/, .github/ | ci pipeline, deploy smoke | — | Not started | 1/4 |
 | UI-00 | 05 design system (ADR-014) | apps/web/components/ui, patterns | component tests | — | Not started | 1 |
-| AUTH-01 | FR-01 | apps/api/app/routers/auth.py | tests/api/test_auth.py | UAT-08, UAT-11 | Not started | 1 |
+| AUTH-01 | FR-01, ADR-013 §4 | apps/api/app/routers/auth.py, migration `user_sessions` (mới, thay đổi so với 03_DATABASE_SCHEMA) | tests/api/test_auth.py | UAT-08, UAT-11 | Not started | 1 |
 | DB-01 | — | apps/api/migrations/ | tests/db/ | — | Not started | 1 |
 | TOOL-01 | FR-02 | | | UAT-01 | Not started | 2 |
 | UI-01 | FR-02, O1 | | | UAT-01 | Not started | 2 |

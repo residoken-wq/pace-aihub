@@ -1,5 +1,5 @@
 # ADR-013: Chuẩn hoá Tech Stack và phiên bản cho PACE AI Hub
-- **Status:** Proposed
+- **Status:** Proposed (chờ Chủ dự án ký để chuyển sang Accepted)
 - **Date:** 2026-10-20 · **Deciders:** Chủ dự án · **Story:** INF-01a, DB-01, UI-00
 
 ---
@@ -26,11 +26,11 @@ Tại thời điểm kickoff (20/10/2026), Next.js 14 đã kết thúc vòng đ�
 
 Toàn bộ các thành phần được tra cứu trực tiếp từ registry (`npm view` và PyPI API) và cố định phiên bản (pin version) tại thời điểm lập tài liệu:
 
-| Tên thành phần | Phiên bản cố định (Pin version) | Ngày phát hành | Ngày hết hỗ trợ (EOL) | Link nguồn chính thức |
+| Tên thành phần | Phiên bản cố định (Pin version) | Dòng major ra mắt | Ngày hết hỗ trợ (EOL) | Link nguồn chính thức |
 |---|---|---|---|---|
 | **Node.js (LTS)** | `24.x LTS` | 2025-04-22 (LTS: 2025-10-28) | 2028-04-30 | https://nodejs.org/en/about/previous-releases |
 | **pnpm** | `12.14.0` | 2025 | Rolling – chỉ bản mới nhất được vá | https://pnpm.io/ |
-| **Next.js** | `16.4.2` | 2025-10-21 (v16) | Rolling – chỉ bản mới nhất được vá | https://nextjs.org/blog |
+| **Next.js** | `16.4.2` | 2025-10-21 (v16) | Chính sách hỗ trợ 2 năm cho mỗi major; v16 dự kiến ~10/2027 | https://nextjs.org/blog |
 | **React** | `19.3.1` | 2024-12-05 (v19) | Rolling – chỉ bản mới nhất được vá | https://react.dev/blog |
 | **Tailwind CSS** | `4.3.3` | 2025-01-23 (v4) | Rolling – chỉ bản mới nhất được vá | https://tailwindcss.com/blog |
 | **shadcn/ui** | `4.22.1` | 2025 | Rolling – chỉ bản mới nhất được vá | https://ui.shadcn.com/docs/changelog |
@@ -86,7 +86,7 @@ Tuân thủ nguyên tắc phân quyền và an toàn thông tin tại [10-securi
    - Khi Next.js Server Components hoặc Route Handlers gọi API nội bộ sang FastAPI, server Next.js đọc cookie từ request header (`cookies()`) và chuyển tiếp (forward) nguyên vẹn header `Cookie: pace_session=...` sang FastAPI để xác thực người dùng.
 6. **Thu hồi Session khi offboard (Revocation):**
    - Khi nhân viên offboard hoặc bị vô hiệu hóa tài khoản trong Microsoft Entra ID / admin thu hồi quyền qua CMS: FastAPI cung cấp API thu hồi ngay lập tức, xóa session key trong Valkey và đánh dấu `revoked_at` trong bảng `user_sessions` (PostgreSQL), đồng thời ghi log vào `audit_events`.
-   - Mọi request mang session cookie đã thu hồi sẽ nhận mã lỗi `401 UNAUTHORIZED`.
+   - Mọi request mang session cookie đã thu hồi sẽ nhận mã lỗi `401 UNAUTHENTICATED` (theo [04_API_GATEWAY.md](../specs/04_API_GATEWAY.md)).
 7. **Lưu trữ phiên bền vững bằng Valkey AOF:**
    - Cấu hình Valkey bật cơ chế lưu trữ AOF (Append-Only File) với chính sách `appendfsync everysec` cho dữ liệu session và PKCE state, đảm bảo phiên đăng nhập của người dùng không bị mất khi container khởi động lại.
 8. **Bảo vệ CSRF:** Các request thay đổi trạng thái (POST, PUT, DELETE, PATCH) yêu cầu Anti-CSRF token hoặc custom header (`X-Requested-With: XMLHttpRequest` / `X-CSRF-Token`).
