@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pace.local/schemas/daily_brief.v1.json",
+  "title": "DailyBrief v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["date", "timezone", "key_takeaways", "reminders", "customer", "competitor", "market", "suggested_actions", "sources", "status", "generated_at"],
+  "properties": {
+    "date": {"type": "string", "format": "date"},
+    "timezone": {"type": "string", "const": "Asia/Ho_Chi_Minh"},
+    "window": {
+      "type": "object",
+      "properties": {"from": {"type": "string", "format": "date-time"}, "to": {"type": "string", "format": "date-time"}}
+    },
+    "key_takeaways": {"type": "array", "maxItems": 3, "items": {"type": "string"}},
+    "reminders": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["title", "when"],
+      "properties": {"title": {"type": "string"}, "when": {"type": "string", "format": "date-time"}}
+    }},
+    "customer": {"$ref": "#/$defs/group"},
+    "competitor": {"$ref": "#/$defs/group"},
+    "market": {"$ref": "#/$defs/group"},
+    "suggested_actions": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["action", "rationale", "source_ids"],
+      "properties": {
+        "action": {"type": "string"},
+        "rationale": {"type": "string"},
+        "source_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    }},
+    "sources": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false, "required": ["id", "url", "title"],
+      "properties": {
+        "id": {"type": "string"}, "url": {"type": "string", "format": "uri"},
+        "title": {"type": "string"}, "published_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    }},
+    "status": {"type": "string", "enum": ["draft", "pending_approval", "approved", "rejected", "sent"]},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "reviewed_by": {"type": ["string", "null"]}
+  },
+  "$defs": {
+    "group": {
+      "type": "object", "additionalProperties": false, "required": ["items", "no_update_note"],
+      "properties": {
+        "items": {"type": "array", "maxItems": 5, "items": {"$ref": "#/$defs/item"}},
+        "no_update_note": {"type": ["string", "null"], "description": "'Không có cập nhật đáng kể' when items is empty"}
+      }
+    },
+    "item": {
+      "type": "object", "additionalProperties": false,
+      "required": ["title", "summary_fact", "inference", "relevance", "confidence_label", "source_ids", "source_urls", "published_at"],
+      "properties": {
+        "title": {"type": "string"},
+        "summary_fact": {"type": "string", "description": "[Sự kiện] — only what sources state"},
+        "inference": {"type": ["string", "null"], "description": "[Suy luận] — analysis, clearly separated"},
+        "relevance": {"type": "string"},
+        "confidence_label": {"type": "string", "enum": ["cao", "trung bình", "thấp"]},
+        "source_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "source_urls": {"type": "array", "minItems": 1, "items": {"type": "string", "format": "uri"}},
+        "published_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    }
+  }
+}

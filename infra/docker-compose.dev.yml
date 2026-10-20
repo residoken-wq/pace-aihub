@@ -1,0 +1,85 @@
+# Local dev stack. Usage (from repo root):
+#   cp .env.example .env   # then fill in values; .env is gitignored
+#   docker compose -f infra/docker-compose.dev.yml --env-file .env up -d
+# Image versions: keep in sync with docs/adr/ADR-013-tech-stack.md.
+# The web service is added with the web skeleton (INF-01a PR-B).
+name: pace-aihub
+
+x-backend-env: &backend-env
+  PACE_ENV: dev
+  PACE_LOG_LEVEL: ${PACE_LOG_LEVEL:-INFO}
+  PACE_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:?set in .env}:${POSTGRES_PASSWORD:?set in .env}@postgres:5432/${POSTGRES_DB:?set in .env}
+  PACE_VALKEY_URL: redis://valkey:6379/0
+
+services:
+  postgres:
+    image: postgres:17.11-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set in .env}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  valkey:
+    image: valkey/valkey:9.1.2-alpine
+    # AOF keeps sessions/PKCE state across restarts (ADR-013 §4).
+    command: ["valkey-server", "--appendonly", "yes", "--appendfsync", "everysec"]
+    ports: ["127.0.0.1:6379:6379"]
+    volumes: [valkeydata:/data]
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build: { context: .., dockerfile: apps/api/Dockerfile }
+    environment: *backend-env
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    build: { context: .., dockerfile: apps/api/Dockerfile }
+    environment: *backend-env
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      valkey: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  worker:
+    build: { context: .., dockerfile: apps/worker/Dockerfile }
+    environment: *backend-env
+    depends_on:
+      valkey: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A worker.celery_app inspect ping --timeout 5 | grep -q pong"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+
+  mailpit:
+    # Fake SMTP for dev; nothing leaves the machine. UI on http://localhost:8025
+    image: axllent/mailpit:v1.31.6
+    ports: ["127.0.0.1:8025:8025", "127.0.0.1:1025:1025"]
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
+  valkeydata:

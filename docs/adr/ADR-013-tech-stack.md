@@ -175,3 +175,25 @@ sequenceDiagram
 1. Trình Chủ dự án phê duyệt chính thức (chuyển sang `Accepted`).
 2. Cập nhật [traceability.md](../traceability.md).
 3. Khởi tạo cấu trúc monorepo trong Phase 1 (story **INF-01a**) với các phiên bản đã chỉ định.
+
+---
+
+## Phụ lục A: Phiên bản pin khi bootstrap (INF-01a PR-A, 20/10/2026)
+
+Tra trực tiếp từ PyPI, npm, Docker Hub và nodejs.org lúc dựng khung. Quyết định ở trên không đổi; phụ lục chỉ ghi bản patch cụ thể và các thư viện bổ sung.
+
+| Thành phần | Pin | Ghi chú |
+|---|---|---|
+| Node.js | `24.22.0` (`.nvmrc` = 24) | Bản 24 LTS mới nhất trên nodejs.org |
+| pnpm | `12.14.0` (`packageManager`) | Khớp bảng mục 2 |
+| uv | `0.13.3` | Cài trong Docker image |
+| Python image | `python:3.12.15-slim-bookworm` | Python 3.12 theo bảng mục 2 |
+| PostgreSQL image | `postgres:17.11-alpine` | |
+| Valkey image | `valkey/valkey:9.1.2-alpine` | Bật AOF (`appendfsync everysec`) |
+| Mailpit image | `axllent/mailpit:v1.31.6` | Chỉ dùng cho dev (fake SMTP) |
+| FastAPI / SQLAlchemy / Alembic / Pydantic / Celery | `0.150.0` / `2.1.5` / `1.20.0` / `2.14.1` / `5.6.3` | Khớp bảng mục 2 |
+| uvicorn / asyncpg / pydantic-settings / structlog / httpx | `0.54.0` / `0.32.0` / `2.16.0` / `26.1.0` / `0.28.1` | Rolling |
+| redis-py (client cho Valkey) | `6.4.0` | **Bị giới hạn**: kombu (broker của Celery 5.6.3) yêu cầu `redis<6.5`. Nâng khi kombu nới giới hạn |
+| openapi-typescript | `7.13.0` | Sinh TS types từ OpenAPI |
+| TypeScript (packages/contracts) | `5.9.3` | **Bị giới hạn**: openapi-typescript 7.x cần compiler API của TS 5.x; TS 7.0 không còn API này |
+| pytest / pytest-asyncio / testcontainers / ruff / mypy | `9.1.1` / `1.4.0` / `4.15.0` / `0.17.1` / `2.4.0` | Dev only |
