@@ -1,5 +1,14 @@
 # 09 — Decision Log (bổ sung ADR-001..008 trong 07)
-**Version:** 1.2 · **Ngày:** 20/10/2026 · **Nguồn:** trả lời của chủ dự án cho các câu hỏi mở trong `08_ANTIGRAVITY_SETUP_AND_PHASE_PLAN.md` v1.0 và v1.1
+**Version:** 1.5 · **Ngày:** 20/10/2026 · **Nguồn:** trả lời của chủ dự án cho các câu hỏi mở trong `08_ANTIGRAVITY_SETUP_AND_PHASE_PLAN.md` v1.0 và v1.1
+
+**Changelog v1.5:**
+- Review ADR-013 lần 3 (commit `53550e0`): đạt B1–B6, đề xuất Accepted. Còn lại: repo chưa cập nhật kit (R2), repo vẫn ở tài khoản cá nhân (R4).
+
+**Changelog v1.4:**
+- Review ADR-013 lần 2 (bản trong repo commit `6c15b19`): trả lại để sửa; kèm bảng version đã xác minh.
+
+**Changelog v1.3:**
+- ADR-013 (tech stack) bị trả lại để sửa: Next.js 14 hết hỗ trợ.
 
 **Changelog v1.2:**
 - Kickoff ngày 20/10/2026.
@@ -17,6 +26,7 @@
 | ADR-010 | Pilot chạy trên **VM nội bộ** | Accepted | IT, BOD |
 | ADR-011 | Đội delivery gồm **4 người**; chủ dự án quyết định phân vai và là approver duy nhất | Accepted | Chủ dự án |
 | ADR-012 | Cho phép dùng **Antigravity + model của Antigravity** với mã nguồn nội bộ | Accepted | IT Security |
+| ADR-013 | Tech stack: Node 24 LTS, Next.js 16.4 / React 19.3 / Tailwind 4.3, Python 3.12 + FastAPI 0.150, PostgreSQL 17, Valkey 9.1, BFF auth tại FastAPI | **Đề xuất Accepted** sau review lần 3 (commit `53550e0`), chờ chủ dự án ký; kèm 3 việc theo dõi | Chủ dự án |
 | ADR-015 | Repo GitHub **tạm thời public** | Accepted tạm thời, chủ dự án chấp nhận rủi ro; xem lại trước 30/10/2026 | Chủ dự án |
 | ADR-014 | Đưa **CMS-01** (admin console + budget dashboard) và **UI-00** (design system + AppShell) vào phạm vi P0 | Accepted | Chủ dự án (PO) |
 
@@ -112,3 +122,78 @@
   5. Secret scanning + push protection bật (repo public cũng được hỗ trợ). Nếu có secret lọt lên: **rotate ngay**, không chỉ xóa commit.
   6. Thêm `LICENSE`; khuyến nghị "All rights reserved / proprietary" nếu không chủ đích open source.
 - **Hạn xem lại:** **30/10/2026 (cuối W2)**, trước khi merge cấu hình AUTH-01 (Entra) và INF-01c (deploy lên VM). Nếu vẫn public sau mốc này, chủ dự án ký chấp nhận rủi ro lại bằng văn bản.
+
+## Review ADR-013 — lần 2 (20/10/2026, commit `6c15b19`, repo `residoken-wq/pace-aihub`)
+**Kết luận: TRẢ LẠI ĐỂ SỬA.**
+- Đạt: hướng kiến trúc (Next.js 16 + React 19 + Tailwind v4, BFF auth tại FastAPI, Valkey thay Redis, PostgreSQL 17, chính sách Dependabot).
+- Chưa đạt: bảng version — nhiều pin cũ, có ngày EOL không có nguồn, và 2 thông tin sai.
+
+### Lỗi chặn (phải sửa)
+| # | Vấn đề | Bằng chứng (xác minh 20/10/2026) | Sửa |
+|---|---|---|---|
+| B1 | Pin version cũ khoảng 2 năm: FastAPI 0.115, Pydantic 2.10, Alembic 1.14, Celery 5.4, Playwright 1.49, Tailwind 4.0, pnpm 9, Valkey 8.0. Các thư viện này **không có LTS**; chỉ bản mới nhất được vá | PyPI/npm: FastAPI 0.150.0, Pydantic 2.14.1, SQLAlchemy 2.1.5, Alembic 1.20.0, Celery 5.6.3, Uvicorn 0.54.0, Playwright 1.64.1, Tailwind 4.3.3, pnpm 12.14.0, shadcn CLI 4.22.1, Next.js 16.4.2, React 19.3.1; Valkey tag mới nhất 9.1.2 | Dùng bảng chuẩn bên dưới |
+| B2 | Cột EOL "≥ 2027/2028" cho thư viện không có chính sách LTS là **không có nguồn** (vi phạm nguyên tắc không bịa) | — | Ghi "Rolling: chỉ bản mới nhất được vá → Dependabot hàng tuần" |
+| B3 | Sai: "PostgreSQL 18 chưa GA" | PostgreSQL 18 đã phát hành 09/2025, hiện có bản vá 18.6 | Sửa lập luận. Chọn 17 vẫn chấp nhận được (EOL 11/2029); hoặc 18 (EOL 11/2030) |
+| B4 | Sai/lỗi thời: "Redis 7.4/8 không còn OSI open source" | Redis 8 (05/2025) có thêm lựa chọn license AGPLv3 | Giữ Valkey (BSD-3, tránh nghĩa vụ AGPL) nhưng sửa lập luận |
+| B5 | Node.js 22 đã vào Maintenance từ 21/10/2025, EOL 30/04/2027, chỉ hơn mốc tối thiểu 1 tháng; production sẽ phải nâng cấp ngay | nodejs/Release schedule: Node 24 LTS, EOL 30/04/2028 | Dùng **Node 24 LTS** |
+| B6 | Link `file:///c:/Users/admin/...` hỏng trên GitHub và lộ đường dẫn máy dev (repo public) | — | Đổi sang link tương đối (`../specs/01_PRD.md`) |
+
+### Lỗi không chặn (nên sửa)
+- "Expand/Contract (ADR-003)" sai tham chiếu: ADR-003 là Entra SSO. Nguồn đúng là rule `40-database`.
+- Deciders: theo ADR-011, chủ dự án là approver duy nhất.
+- Tailwind: Next.js dùng `app/globals.css`, không dùng `index.css`.
+- Python 3.12 chỉ còn nhận bản vá bảo mật (EOL 10/2028, đạt tiêu chí). Khuyến nghị 3.13+ nếu mọi dependency có wheel; nếu giữ 3.12, ghi rõ lý do.
+- Auth: bổ sung (a) cách thu hồi session khi offboard (FR-01, UAT-11) — xóa session trong Valkey + kiểm tra `active` mỗi request; (b) Valkey lưu session phải bật AOF, nếu không mọi người bị đăng xuất khi restart; (c) Next.js Server Components gọi API phải forward cookie qua mạng nội bộ, cùng origin qua reverse proxy (`/api` → FastAPI).
+- Bỏ các tuyên bố tuyệt đối ("bảo mật tuyệt đối", "loại trừ IDOR"). BFF không chống IDOR; IDOR được kiểm soát bằng workspace filter + test.
+
+### Bảng version chuẩn đề xuất (pin bản vá mới nhất tại ngày bootstrap)
+| Thành phần | Pin | Hỗ trợ |
+|---|---|---|
+| Node.js | 24.x LTS (Krypton) | EOL 30/04/2028 |
+| pnpm | 12.x | Rolling |
+| Next.js / React | 16.4.x / 19.3.x | Next 16: EOL ~10/2027 theo chính sách 2 năm |
+| Tailwind CSS / shadcn CLI | 4.3.x / 4.x | Rolling |
+| Playwright | 1.64.x | Rolling |
+| Python | 3.13.x (hoặc 3.12.x có lý do) | 3.12: EOL 10/2028 |
+| FastAPI / Uvicorn | 0.150.x / 0.54.x | Rolling |
+| Pydantic | 2.14.x | Rolling (v2) |
+| SQLAlchemy / Alembic | 2.1.x / 1.20.x | Rolling |
+| Celery | 5.6.x | Rolling |
+| Valkey | 9.1.x | Theo chính sách Valkey (agent xác minh, ghi link) |
+| PostgreSQL | 17.x (hoặc 18.x) | 17: EOL 11/2029 |
+
+### Phát hiện về repo (ngoài ADR-013)
+| # | Mức | Vấn đề | Sửa |
+|---|---|---|---|
+| R1 | Trung bình | Tài liệu spec bị nhân đôi: `docs/*.md` (bản cũ, 06 chưa có ADR-014) và `docs/specs/*.md`. Agent có thể đọc nhầm bản cũ | Xóa bản ở `docs/` gốc, chỉ giữ `docs/specs/` |
+| R2 | Trung bình | Repo đang dùng kit cũ (v1.3): AGENTS.md, rule 30, skill bootstrap, tokens.css **chưa có** Next.js 16 / Tailwind v4 | Chép đè kit v1.4+ (`.agents/`, `AGENTS.md`) |
+| R3 | Thấp | Spike `apps/api/spikes/measure_brief.py` commit thẳng vào `main` (prompt yêu cầu không commit vào main). Đã kiểm: key đọc từ env, giá nhập tay, không có secret | Chấp nhận; chuyển sang `spikes/` ngoài `apps/` hoặc giữ nhưng loại khỏi build |
+| R4 | Trung bình | Repo nằm ở tài khoản cá nhân `residoken-wq` (commit bằng email gmail), không phải GitHub organization của PACE như ADR-009/012 | Chuyển repo vào organization PACE; dùng tài khoản công ty |
+| R5 | Đạt | 20 fixture nguồn là dữ liệu tổng hợp (`example.com`, "Tập đoàn Alpha", "CompetitorY"); không thấy secret, IP hay hostname nội bộ | — |
+
+## Review ADR-013 — lần 3 (20/10/2026, commit `53550e0`, nhánh `docs/adr-013-tech-stack-review-2`)
+**Kết luận: ĐỀ XUẤT ACCEPTED.** Cả 6 lỗi chặn B1–B6 đã được sửa.
+
+| # | Kết quả |
+|---|---|
+| B1 Version cũ | Đạt: version khớp registry ngày 20/10/2026 |
+| B2 EOL không có nguồn | Đạt: dùng "Rolling" |
+| B3 PostgreSQL 18 | Đạt: đã sửa lập luận, giữ 17 có lý do |
+| B4 Redis license | Đạt: đã nêu AGPLv3, giữ Valkey |
+| B5 Node.js | Đạt: Node 24 LTS |
+| B6 Link file:/// | Đạt: dùng link tương đối |
+| Spec trùng (R1) | Đạt: đã xóa `docs/*.md`, chỉ giữ `docs/specs/` |
+
+**Việc theo dõi (không chặn, sửa trong PR này hoặc trong AUTH-01):**
+1. Mã lỗi: ADR ghi `401 UNAUTHORIZED`, spec 04 dùng `401 UNAUTHENTICATED`. Phải theo 04.
+2. **Thay đổi schema:** ADR thêm bảng `user_sessions` (`revoked_at`) chưa có trong `03_DATABASE_SCHEMA.sql`. Chấp nhận; tạo migration trong AUTH-01 và ghi vào traceability.
+3. AC bổ sung cho AUTH-01: phát hiện tài khoản bị disable trong Entra. Session có thời hạn (đề xuất idle 8h, tối đa 24h; chờ chủ dự án chốt), kiểm tra lại `app_users.active` mỗi request, đăng nhập lại khi hết hạn. Nếu không có cơ chế này, UAT-11 chỉ đạt khi admin thu hồi thủ công trong CMS.
+4. Nhỏ:
+   - Next.js không phải "Rolling" mà có chính sách hỗ trợ 2 năm (v16 hết hỗ trợ khoảng 10/2027).
+   - Cột "Ngày phát hành" ghi ngày của dòng major, không phải ngày của bản pin (vd FastAPI 0.150 không phát hành 2024-09). Đổi tên cột thành "Dòng major ra mắt".
+   - AGPLv3 chỉ buộc công bố mã khi **sửa đổi** Redis và cung cấp qua mạng; lập luận hiện tại hơi quá, nhưng không ảnh hưởng quyết định chọn Valkey.
+
+**Điều kiện trước khi chạy INF-01a (`/pace-repo-bootstrap`):**
+- **R2 (chặn bootstrap):** repo vẫn dùng kit cũ. `AGENTS.md`, rule `30-frontend-nextjs`, skill `pace-repo-bootstrap` chưa có Next.js 16 / Node 24 / Valkey / quy tắc "không pin version theo trí nhớ". Phải chép đè kit v1.5 trước khi bootstrap, nếu không agent sẽ làm theo skill cũ.
+- Merge nhánh `docs/adr-013-tech-stack-review-2` vào `main` qua PR (không push thẳng).
+- R4 (chưa chặn, hạn 30/10): chuyển repo vào GitHub organization của PACE.

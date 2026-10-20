@@ -19,9 +19,9 @@ If a request conflicts with these docs, STOP and say so. Do not silently change 
 
 ## Monorepo layout
 ```
-apps/web        Next.js (App Router) + TypeScript + Tailwind + shadcn/ui
+apps/web        Next.js 16.x (App Router) + TypeScript + Tailwind v4 + shadcn/ui
 apps/api        FastAPI (Python 3.12) + SQLAlchemy 2 + Alembic + Pydantic v2
-apps/worker     Celery + Redis: collectors, report generation, dispatch, reconciliation
+apps/worker     Celery + Valkey: collectors, report generation, dispatch, reconciliation
 packages/contracts  OpenAPI spec + JSON Schemas (DailyBrief) — single source for types
 infra/          docker-compose, reverse proxy, backups
 docs/           specs/, plan/, adr/, runbooks/, traceability.md
