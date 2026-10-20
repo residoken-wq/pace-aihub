@@ -1,5 +1,5 @@
 # ADR-013: Chuẩn hoá Tech Stack và phiên bản cho PACE AI Hub
-- **Status:** Proposed (chờ Chủ dự án ký để chuyển sang Accepted)
+- **Status:** Accepted (Chủ dự án duyệt ngày 2026-10-20)
 - **Date:** 2026-10-20 · **Deciders:** Chủ dự án · **Story:** INF-01a, DB-01, UI-00
 
 ---
