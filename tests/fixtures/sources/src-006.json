@@ -1,0 +1,9 @@
+{
+  "id": "src-006",
+  "source_kind": "google_alerts",
+  "title": "Bộ Thông tin và Truyền thông ban hành hướng dẫn an toàn thông tin đối với các ứng dụng trí tuệ nhân tạo nội bộ",
+  "canonical_url": "https://example.com/news/2026/10/06",
+  "published_at": "2026-10-19T13:30:00+07:00",
+  "category_hint": "market",
+  "content": "Khung hướng dẫn mới yêu cầu các doanh nghiệp triển khai AI nội bộ phải đảm bảo nguyên tắc bảo vệ bí mật kinh doanh, cách ly dữ liệu khách hàng và không lưu trữ khóa API trên thiết bị đầu cuối."
+}
