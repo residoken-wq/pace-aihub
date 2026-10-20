@@ -1,55 +1,88 @@
-/* PACE AI Hub design tokens — shadcn/ui compatible (HSL channels) */
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 220 15% 15%;
-    --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
-    --primary: 208 79% 51%;            /* #1E88E5 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 220 15% 20%;
-    --accent: 33 97% 49%;              /* #FB8C00 */
-    --accent-foreground: 220 15% 10%;
-    --muted: 210 20% 96%;
-    --muted-foreground: 220 9% 40%;
-    --success: 142 64% 32%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 40%;
-    --warning-foreground: 0 0% 100%;
-    --destructive: 0 72% 45%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 214 18% 86%;
-    --input: 214 18% 80%;
-    --ring: 208 79% 45%;
-    --radius: 12px;
-    --sidebar-width: 256px;
-  }
-  .dark {
-    --background: 222 22% 9%;
-    --foreground: 210 20% 95%;
-    --card: 222 20% 12%;
-    --card-foreground: 210 20% 95%;
-    --popover: 222 20% 12%;
-    --popover-foreground: 210 20% 95%;
-    --primary: 208 85% 62%;
-    --primary-foreground: 222 22% 9%;
-    --secondary: 222 15% 18%;
-    --secondary-foreground: 210 20% 95%;
-    --accent: 33 95% 58%;
-    --accent-foreground: 222 22% 9%;
-    --muted: 222 15% 18%;
-    --muted-foreground: 215 12% 68%;
-    --success: 142 55% 48%;
-    --success-foreground: 222 22% 9%;
-    --warning: 38 90% 56%;
-    --warning-foreground: 222 22% 9%;
-    --destructive: 0 75% 62%;
-    --destructive-foreground: 222 22% 9%;
-    --border: 222 12% 24%;
-    --input: 222 12% 30%;
-    --ring: 208 85% 62%;
-  }
+/* PACE AI Hub design tokens — shadcn/ui + Tailwind CSS v4 format.
+   Paste into apps/web/app/globals.css after `@import "tailwindcss";`.
+   Colors are full CSS values (hsl()) so they work directly with `@theme inline`. */
+
+:root {
+  --radius: 12px;
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(220 15% 15%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(220 15% 15%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(220 15% 15%);
+  --primary: hsl(208 79% 51%);            /* #1E88E5 */
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(210 20% 96%);
+  --secondary-foreground: hsl(220 15% 20%);
+  --accent: hsl(33 97% 49%);              /* #FB8C00 */
+  --accent-foreground: hsl(220 15% 10%);
+  --muted: hsl(210 20% 96%);
+  --muted-foreground: hsl(220 9% 40%);
+  --success: hsl(142 64% 32%);
+  --success-foreground: hsl(0 0% 100%);
+  --warning: hsl(38 92% 40%);
+  --warning-foreground: hsl(0 0% 100%);
+  --destructive: hsl(0 72% 45%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(214 18% 86%);
+  --input: hsl(214 18% 80%);
+  --ring: hsl(208 79% 45%);
+}
+
+.dark {
+  --background: hsl(222 22% 9%);
+  --foreground: hsl(210 20% 95%);
+  --card: hsl(222 20% 12%);
+  --card-foreground: hsl(210 20% 95%);
+  --popover: hsl(222 20% 12%);
+  --popover-foreground: hsl(210 20% 95%);
+  --primary: hsl(208 85% 62%);
+  --primary-foreground: hsl(222 22% 9%);
+  --secondary: hsl(222 15% 18%);
+  --secondary-foreground: hsl(210 20% 95%);
+  --accent: hsl(33 95% 58%);
+  --accent-foreground: hsl(222 22% 9%);
+  --muted: hsl(222 15% 18%);
+  --muted-foreground: hsl(215 12% 68%);
+  --success: hsl(142 55% 48%);
+  --success-foreground: hsl(222 22% 9%);
+  --warning: hsl(38 90% 56%);
+  --warning-foreground: hsl(222 22% 9%);
+  --destructive: hsl(0 75% 62%);
+  --destructive-foreground: hsl(222 22% 9%);
+  --border: hsl(222 12% 24%);
+  --input: hsl(222 12% 30%);
+  --ring: hsl(208 85% 62%);
+}
+
+/* Expose tokens as Tailwind utilities (bg-primary, text-muted-foreground, ...) */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
 }

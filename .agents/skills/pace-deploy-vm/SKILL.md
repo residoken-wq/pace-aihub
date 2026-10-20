@@ -7,7 +7,7 @@ description: Prepare or change deployment of PACE AI Hub to the internal pilot V
 Model: **pull-based**. GitHub Actions builds and pushes signed images to GHCR; the VM pulls a specific tag. No inbound access from GitHub to the internal network. A self-hosted runner is only allowed if IT approves (ephemeral, non-root, this private repo only).
 
 ## Files to produce (`infra/`)
-- `compose.prod.yml`: services `proxy` (Caddy or Nginx, TLS), `web`, `api`, `worker`, `beat`, `redis` (AOF on), `postgres:16` (or external DB VM), optional `pgbackup`. Images pinned by tag `sha-<short>` from `.env.release`. Healthchecks, `restart: unless-stopped`, resource limits, read-only root fs where possible, non-root users, internal network for db/redis (not published).
+- `compose.prod.yml`: services `proxy` (Caddy or Nginx, TLS), `web`, `api`, `worker`, `beat`, `valkey` (AOF on — also stores sessions), `postgres` at ADR-013 major (or external DB VM), optional `pgbackup`. Images pinned by tag `sha-<short>` from `.env.release`. Healthchecks, `restart: unless-stopped`, resource limits, read-only root fs where possible, non-root users, internal network for db/redis (not published).
 - `deploy/deploy.sh <tag>`: verify image signature/digest → `docker compose pull` → run `alembic upgrade head` as one-off job → `up -d` → wait for `/readyz` → smoke test → record release in `deploy/releases.log`. Abort on any failure.
 - `deploy/rollback.sh <previous-tag>`: re-deploy previous tag; DB rollback only if the migration is marked reversible and a human confirms.
 - `deploy/backup.sh` + systemd timer: `pg_dump -Fc` encrypted (age/gpg) → off-VM storage; retention per data policy; `deploy/restore-test.sh` restores into a scratch DB and runs sanity queries.

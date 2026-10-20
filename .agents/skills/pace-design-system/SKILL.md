@@ -7,8 +7,8 @@ description: PACE AI Hub design system — tokens, typography, spacing, status c
 Source: `docs/specs/05_UI_UX_SPEC.md` (Primary #1E88E5, accent #FB8C00, neutral gray, Roboto/system, 8px spacing, 12px card radius, 1440px desktop / 390px mobile, status icon + text).
 
 ## Setup (once, in Phase 1)
-1. Copy `references/tokens.css` into `apps/web/app/globals.css` (CSS variables, light + dark).
-2. Map variables in Tailwind theme (shadcn convention: `--primary`, `--accent`, `--destructive`, `--warning`, `--success`, `--muted`, `--border`, `--ring`, `--radius`).
+1. Tailwind CSS **v4** (CSS-first config, no `tailwind.config.js` theme). Copy `references/tokens.css` into `apps/web/app/globals.css` after `@import "tailwindcss";` — it contains light/dark variables and the `@theme inline` mapping.
+2. Run `shadcn init` for Tailwind v4; when it generates its own color variables, replace them with PACE tokens (keep variable names: `--primary`, `--accent`, `--destructive`, `--warning`, `--success`, `--muted`, `--border`, `--ring`, `--radius`).
 3. Install shadcn primitives as needed: button, input, textarea, select, checkbox, radio-group, switch, form, label, card, badge, table, tabs, dialog, sheet, dropdown-menu, tooltip, toast/sonner, skeleton, alert, progress, separator, breadcrumb, sidebar, stepper (custom).
 4. Fonts: Roboto via `next/font/google` with Vietnamese subset (`subsets: ["latin","vietnamese"]`).
 

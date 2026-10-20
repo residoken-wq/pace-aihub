@@ -4,7 +4,7 @@ globs: apps/web/**
 ---
 # Frontend conventions (Next.js / CMS & end-user UI)
 
-- Next.js App Router, TypeScript `strict`, Server Components by default; `"use client"` only for interactive leaves.
+- Next.js **16.x** App Router (not 14/15 — out of support), Tailwind CSS v4, TypeScript `strict`, Server Components by default; `"use client"` only for interactive leaves.
 - UI kit: Tailwind + shadcn/ui primitives in `components/ui/`; product components in `components/<domain>/`. Do not install another component library.
 - Design tokens only (see `.agents/skills/pace-design-system`): no hard-coded hex, px spacing outside the 8px scale, or ad-hoc fonts.
 - Data: typed client generated from `packages/contracts` + TanStack Query. Never call Anthropic or Graph from the browser. No secrets in `NEXT_PUBLIC_*`.
