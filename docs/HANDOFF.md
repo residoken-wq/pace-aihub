@@ -20,7 +20,7 @@
 | ADR-010 | Pilot trên **VM nội bộ** riêng (Ubuntu 24.04, Docker Compose); IT giao VM trước **22/10/2026**; egress allowlist |
 | ADR-011 | Đội **4 người**: Tech Lead/BE, FE/UI, Fullstack/DevOps-Sec, BA-PO/QA. **Chủ dự án là approver duy nhất**. Tech Lead được ủy quyền duyệt PR; người viết không tự merge |
 | ADR-012 | Được dùng AI coding agent với mã nguồn nội bộ. **Không** đưa secret/PII/dữ liệu thật vào prompt, fixture hay repo |
-| ADR-013 | Tech stack: Node 24 LTS, pnpm 12, Next.js 16.4 + React 19.3 + Tailwind 4.3 + shadcn, Python 3.12 + FastAPI 0.150 + SQLAlchemy 2.1 + Alembic 1.20 + Pydantic 2.14, Celery 5.6, **Valkey 9.1** (không dùng Redis), **PostgreSQL 17**, Playwright 1.64. Auth = OIDC + PKCE tại FastAPI, session cookie HttpOnly, không giữ token ở browser. **Trạng thái: đề xuất Accepted, chờ chủ dự án ký** (xem mục 5) |
+| ADR-013 | Tech stack: Node 24 LTS, pnpm 12, Next.js 16.4 + React 19.3 + Tailwind 4.3 + shadcn, Python 3.12 + FastAPI 0.150 + SQLAlchemy 2.1 + Alembic 1.20 + Pydantic 2.14, Celery 5.6, **Valkey 9.1** (không dùng Redis), **PostgreSQL 17**, Playwright 1.64. Auth = OIDC + PKCE tại FastAPI, session cookie HttpOnly, không giữ token ở browser. **Trạng thái: Accepted** (chủ dự án duyệt 20/10/2026) |
 | ADR-014 | Thêm **UI-00** (design system + AppShell, +3 dev-days) và **CMS-01** (admin console + budget dashboard, +6) vào P0. P0 ≈ 114 dev-days |
 | ADR-015 | Repo **tạm thời PUBLIC**. Không commit hostname/IP nội bộ, tenant ID, dữ liệu khách hàng/đối thủ thật; dùng `docs/internal/` và `tests/fixtures/private/` (gitignored). Hạn xem lại **30/10/2026** |
 
