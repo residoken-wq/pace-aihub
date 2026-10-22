@@ -2,6 +2,22 @@
 
 Dùng **Planning mode** cho các prompt dưới đây. Mỗi prompt chỉ làm 1 story, và người duyệt plan trước khi agent code.
 
+## Quy tắc chung: áp dụng cho MỌI prompt bên dưới
+Dán khối sau vào cuối mỗi prompt (hoặc nhắc agent "áp dụng mục Hoàn tất trong KICKOFF_PROMPTS.md"). Chủ dự án vẫn duyệt plan ở Planning mode; từ lúc code xong đến lúc mở PR thì agent tự làm.
+
+```
+## Hoàn tất (tự làm, không chờ hỏi)
+- Sau khi tôi duyệt plan và code xong: commit (conventional commits + story ID), `git push -u origin <nhánh>`,
+  rồi MỞ PR vào main bằng `gh pr create` (body theo cấu trúc Tóm tắt / Thay đổi / Kiểm tra / Chưa kiểm chứng).
+- Dán OUTPUT THẬT của mọi lệnh kiểm chứng vào mô tả PR (che mọi giá trị trong .env, token, hostname nội bộ).
+- Task chỉ kiểm chứng, không có thay đổi code: KHÔNG tạo commit rỗng; dán output bằng `gh pr comment <số PR>`
+  (hoặc `gh issue comment` nếu không có PR liên quan).
+- Nếu push hoặc `gh` lỗi (chưa đăng nhập, thiếu quyền): DỪNG, in nguyên lỗi, không được báo là đã push hoặc đã mở PR.
+- Không tự merge (ADR-011).
+```
+
+Điều kiện: máy chạy agent đã đăng nhập `gh` (`gh auth status`) bằng tài khoản có quyền push và mở PR trên repo.
+
 ## Phase 0 — Kiểm tra môi trường
 ```
 Đọc AGENTS.md, docs/plan/PHASES.md và toàn bộ docs/specs/. Không viết code.
