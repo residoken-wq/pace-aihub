@@ -24,6 +24,8 @@ __pycache__/
 coverage/
 playwright-report/
 test-results/
+screenshots/
+*.tsbuildinfo
 # OS / editor
 .DS_Store
 .idea/

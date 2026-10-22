@@ -11,7 +11,7 @@ Nguyên tắc: *share spending capacity, never share the key*.
 ```
 apps/api            FastAPI (Python 3.12), Alembic
 apps/worker         Celery trên Valkey
-apps/web            Next.js 16 (đang dựng, INF-01a PR-B)
+apps/web            Next.js 16, Tailwind v4
 packages/contracts  OpenAPI + JSON Schema + TS types sinh tự động
 infra/              docker-compose dev
 ```

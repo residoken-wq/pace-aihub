@@ -2,7 +2,7 @@
 
 | Story | FR / Rule | Files (main) | Tests | UAT | Status | Phase |
 |---|---|---|---|---|---|---|
-| INF-01 | NFR | infra/, .github/, apps/api (health, request_id, errors, logging), apps/worker (queues), packages/contracts | apps/api/tests (health, readiness, request_id, errors, logging redaction, migrations up/down/up), apps/worker/tests (config, ping round-trip); ci pipeline, deploy smoke | — | In progress (INF-01a PR-A) | 1/4 |
+| INF-01 | NFR | infra/, apps/web, apps/api (health, request_id, errors, logging), apps/worker (queues), packages/contracts | apps/web/tests, apps/web/e2e, apps/api/tests, apps/worker/tests; dev compose | — | In progress (INF-01a PR-B) | 1/4 |
 | UI-00 | 05 design system (ADR-014) | apps/web/components/ui, patterns | component tests | — | Not started | 1 |
 | AUTH-01 | FR-01, ADR-013 §4 | apps/api/app/routers/auth.py, migration `user_sessions` (mới, thay đổi so với 03_DATABASE_SCHEMA) | tests/api/test_auth.py | UAT-08, UAT-11 | Not started | 1 |
 | DB-01 | — | apps/api/migrations/ | tests/db/ | — | Not started | 1 |

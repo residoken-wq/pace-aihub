@@ -195,5 +195,13 @@ Tra trực tiếp từ PyPI, npm, Docker Hub và nodejs.org lúc dựng khung. Q
 | uvicorn / asyncpg / pydantic-settings / structlog / httpx | `0.54.0` / `0.32.0` / `2.16.0` / `26.1.0` / `0.28.1` | Rolling |
 | redis-py (client cho Valkey) | `6.4.0` | **Bị giới hạn**: kombu (broker của Celery 5.6.3) yêu cầu `redis<6.5`. Nâng khi kombu nới giới hạn |
 | openapi-typescript | `7.13.0` | Sinh TS types từ OpenAPI |
-| TypeScript (packages/contracts) | `5.9.3` | **Bị giới hạn**: openapi-typescript 7.x cần compiler API của TS 5.x; TS 7.0 không còn API này |
+| TypeScript (packages/contracts, apps/web) | `5.9.3` | **Bị giới hạn**: openapi-typescript 7.x cần compiler API của TS 5.x; TS 7.0 loại bỏ API này và chưa ổn định với hệ sinh thái React 19 / Next 16 tooling |
 | pytest / pytest-asyncio / testcontainers / ruff / mypy | `9.1.1` / `1.4.0` / `4.15.0` / `0.17.1` / `2.4.0` | Dev only |
+| Next.js (apps/web) | `16.4.2` | Next.js 16 App Router |
+| React / React DOM | `19.3.1` | Khớp bảng mục 2 |
+| Tailwind CSS / @tailwindcss/postcss | `4.3.3` | Tailwind v4 Oxide engine |
+| ESLint / eslint-config-next | `10.13.0` / `16.4.2` | Flat config ESLint 10 |
+| Vitest / @testing-library/react / jsdom | `5.0.5` / `16.3.3` / `30.1.3` | Unit/component testing cho web |
+| Playwright (@playwright/test) | `1.64.1` | E2E smoke test theo bảng mục 2 |
+| shadcn CLI | `4.22.1` | Khởi tạo component primitives Tailwind v4 |
+| Node.js Docker web image | `node:24.22.1-alpine3.24` | Multi-stage standalone runner |
