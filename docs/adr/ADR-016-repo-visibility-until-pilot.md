@@ -47,7 +47,8 @@ Chọn **B**.
   2. Đổi tên image `ghcr.io/residoken-wq/...` sang namespace của organization; cập nhật `build.yml` và cấu hình deploy trên VM; package GHCR mới đặt private.
   3. Kiểm tra lại branch protection, CODEOWNERS, GitHub Environments (`dev`, `pilot`) cùng reviewer và secret, Dependabot, secret scanning và push protection, quyền của GitHub App.
   4. Thành viên đội commit bằng email công ty từ thời điểm chuyển.
-  5. Cập nhật `AGENTS.md`, `CLAUDE.md`, `docs/HANDOFF.md`: bỏ các ghi chú "repo public".
+  5. VM đang `git clone` repo qua HTTPS không xác thực (INF-01_STEPS, quyết định 0.2): đổi sang deploy key chỉ đọc **trước** khi đặt repo private, nếu không deploy sẽ hỏng.
+  6. Cập nhật `AGENTS.md`, `CLAUDE.md`, `docs/HANDOFF.md`: bỏ các ghi chú "repo public".
 - **Tài liệu cập nhật cùng ADR này:**
   - `docs/adr/ADR-009-015-decisions.md`: ADR-015 và R4 trỏ sang ADR-016.
   - `docs/HANDOFF.md`: mục 2 và 6.2.
