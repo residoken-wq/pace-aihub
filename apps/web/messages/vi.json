@@ -1,0 +1,15 @@
+{
+  "app": {
+    "title": "PACE AI Hub",
+    "description": "Nền tảng quản trị AI Workflow nội bộ của PACE"
+  },
+  "home": {
+    "welcome": "Chào mừng đến với PACE AI Hub",
+    "placeholder_notice": "Khung ứng dụng giao diện (Web Skeleton - INF-01a)",
+    "system_status": "Trạng thái hệ thống",
+    "api_status_label": "Dịch vụ API:",
+    "api_status_ok": "Đang hoạt động (ok)",
+    "api_status_error": "Không kết nối được API",
+    "api_error_hint": "Không thể kết nối tới dịch vụ API backend. Vui lòng kiểm tra lại trạng thái container hoặc mạng nội bộ."
+  }
+}

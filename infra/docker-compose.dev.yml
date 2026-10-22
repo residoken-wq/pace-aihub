@@ -2,7 +2,6 @@
 #   cp .env.example .env   # then fill in values; .env is gitignored
 #   docker compose -f infra/docker-compose.dev.yml --env-file .env up -d
 # Image versions: keep in sync with docs/adr/ADR-013-tech-stack.md.
-# The web service is added with the web skeleton (INF-01a PR-B).
 name: pace-aihub
 
 x-backend-env: &backend-env
@@ -79,6 +78,19 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
+
+  web:
+    build: { context: .., dockerfile: apps/web/Dockerfile }
+    environment:
+      API_INTERNAL_URL: http://api:8000
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
 
 volumes:
   pgdata:
