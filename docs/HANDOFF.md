@@ -22,7 +22,8 @@
 | ADR-012 | Được dùng AI coding agent với mã nguồn nội bộ. **Không** đưa secret/PII/dữ liệu thật vào prompt, fixture hay repo |
 | ADR-013 | Tech stack: Node 24 LTS, pnpm 12, Next.js 16.4 + React 19.3 + Tailwind 4.3 + shadcn, Python 3.12 + FastAPI 0.150 + SQLAlchemy 2.1 + Alembic 1.20 + Pydantic 2.14, Celery 5.6, **Valkey 9.1** (không dùng Redis), **PostgreSQL 17**, Playwright 1.64. Auth = OIDC + PKCE tại FastAPI, session cookie HttpOnly, không giữ token ở browser. **Trạng thái: Accepted** (chủ dự án duyệt 20/10/2026) |
 | ADR-014 | Thêm **UI-00** (design system + AppShell, +3 dev-days) và **CMS-01** (admin console + budget dashboard, +6) vào P0. P0 ≈ 114 dev-days |
-| ADR-015 | Repo **tạm thời PUBLIC**. Không commit hostname/IP nội bộ, tenant ID, dữ liệu khách hàng/đối thủ thật; dùng `docs/internal/` và `tests/fixtures/private/` (gitignored). Hạn xem lại **30/10/2026** |
+| ADR-015 | Repo **tạm thời PUBLIC**. Không commit hostname/IP nội bộ, tenant ID, dữ liệu khách hàng/đối thủ thật; dùng `docs/internal/` và `tests/fixtures/private/` (gitignored). Hạn xem lại dời sang **trước 11/01/2027** (ADR-016) |
+| ADR-016 | Repo **giữ public đến Pilot**; chuyển vào **GitHub organization của PACE** và đặt private **trước 11/01/2027** (khuyến nghị xong cùng RC 08/01/2027). Thêm điều kiện cho INF-01c/AUTH-01 (không ghi domain, tenant ID thật vào repo). Đây là điều kiện vào Phase 5 |
 
 ## 3. Kế hoạch (`docs/plan/PHASES.md`, kickoff 20/10/2026)
 | Phase | Thời gian | Nội dung |
@@ -58,7 +59,7 @@ Buffer khoảng 12% (mỏng). Nếu trễ: dời COL-02 → thu gọn CMS-01. **
 | # | Việc | Ai | Hạn |
 |---|---|---|---|
 | 1 | Ký ADR-013 Accepted | Chủ dự án | Ngay |
-| 2 | Chuyển repo sang **private** và vào **GitHub organization của PACE** (hiện ở tài khoản cá nhân, commit bằng gmail) | Chủ dự án | 30/10/2026 |
+| 2 | Chuyển repo vào **GitHub organization của PACE** và đặt **private** (hiện ở tài khoản cá nhân, commit bằng gmail). Checklist chuyển: ADR-016 | Chủ dự án | Trước 11/01/2027 (ADR-016) |
 | 3 | Bằng chứng Anthropic Console: credit, billing, giá, spend limit. **Claude Team ≠ API miễn phí** | IT/Chủ dự án | Gate 0, 30/10 |
 | 4 | Ma trận quyền Graph (mailbox chuyên dụng, Sites.Selected), Power Automate license | IT | Gate 0 |
 | 5 | Phân loại dữ liệu / PII / retention (90d raw, 365d audit là đề xuất) | Data owner | Gate 0 |

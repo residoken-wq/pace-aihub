@@ -14,7 +14,7 @@ Tool sharing ≠ data sharing ≠ credential sharing.
 - `docs/specs/06_MVP_BACKLOG.md` (story IDs, DoD, UAT)
 - `docs/specs/07_DECISIONS_AND_TESTS.md` (ADRs, test matrix)
 - `docs/plan/PHASES.md` (current phase and scope)
-- `docs/adr/` (accepted decisions: ADR-009 GitHub Actions + GHCR, ADR-010 pilot on internal VM with pull-based deploy, ADR-011 team of 4 with a single owner-approver, ADR-012 Antigravity allowed — no secrets/real PII in prompts, ADR-014 UI-00 + CMS-01 in P0, ADR-015 repo is PUBLIC for now)
+- `docs/adr/` (accepted decisions: ADR-009 GitHub Actions + GHCR, ADR-010 pilot on internal VM with pull-based deploy, ADR-011 team of 4 with a single owner-approver, ADR-012 Antigravity allowed — no secrets/real PII in prompts, ADR-014 UI-00 + CMS-01 in P0, ADR-015 repo is PUBLIC for now, ADR-016 stays public until moved to the PACE GitHub org and made private before the pilot on 11/01/2027)
 If a request conflicts with these docs, STOP and say so. Do not silently change scope; propose an ADR in `docs/adr/`.
 
 ## Monorepo layout
