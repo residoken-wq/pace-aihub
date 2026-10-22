@@ -224,9 +224,114 @@ Ngoài phạm vi (KHÔNG làm):
 ```
 
 ### Các story Phase 1 khác
+INF-01c: walking skeleton lên VM (chỉ chạy sau khi PR-B và PR-C đã merge; checklist: `docs/plan/INF-01_STEPS.md`)
 ```
-/pace-deploy-vm — INF-01c walking skeleton: compose.prod tối thiểu (proxy TLS + web + api /healthz),
-deploy.sh pull từ GHCR. VM nội bộ đã bàn giao; hỏi tôi trước mọi lệnh chạy trên VM.
+/pace-deploy-vm — INF-01c: walking skeleton lên VM nội bộ. Planning mode: chỉ lập plan, chờ tôi duyệt rồi mới code.
+
+## Điều kiện trước (kiểm tra đầu tiên, nếu thiếu thì DỪNG và báo tôi)
+- PR-B (apps/web + apps/web/Dockerfile) và PR-C (.github/workflows/ci.yml + build.yml đẩy image lên GHCR) đã merge vào main.
+- Trên GHCR đã có image api, worker, web với tag `sha-<7 ký tự>` từ ít nhất một lần build.yml chạy trên main.
+- Nhánh: tạo `feat/inf-01c-walking-skeleton` từ main mới nhất.
+
+## Bối cảnh (đọc trước)
+- AGENTS.md, CLAUDE.md, docs/HANDOFF.md, docs/plan/INF-01_STEPS.md (Bước 0: quyết định đã chốt),
+  .agents/skills/pace-deploy-vm/SKILL.md, .agents/rules/10-security.md, .agents/rules/60-quality-gates.md.
+- docs/adr/ADR-009-015-decisions.md (ADR-009 phương án A pull-based, ADR-010 VM nội bộ, ADR-015),
+  docs/adr/ADR-016-repo-visibility-until-pilot.md (repo PUBLIC đến Pilot — điều kiện bổ sung cho INF-01c),
+  docs/adr/ADR-013-tech-stack.md (Phụ lục A: postgres:17.11-alpine, valkey/valkey:9.1.2-alpine, ...).
+- infra/docker-compose.dev.yml, apps/api (/healthz, /readyz kiểm tra Postgres + Valkey),
+  apps/worker (task `worker.tasks.ping`, queue reconcile), docs/runbooks/local-dev.md.
+
+## Quyết định đã chốt (docs/plan/INF-01_STEPS.md, Bước 0, 22/10/2026) — làm đúng, không đổi
+- Token GHCR trên VM: PAT chỉ quyền đọc package (tài khoản `residoken-wq`), xoay 90 ngày, đặt ở
+  `/etc/pace-ai-hub/ghcr.token`. Tra docs GitHub hiện hành để ghi đúng loại token và quyền tối thiểu.
+- VM lấy code deploy: `git clone` qua HTTPS không xác thực (repo đang public). Runbook PHẢI có mục
+  "Trước khi repo chuyển private: đổi sang deploy key chỉ đọc" (ADR-016, checklist chuyển repo).
+- TLS: chứng chỉ do IT cấp, mount vào proxy. Proxy: **Nginx** (không dùng ACME).
+- PostgreSQL chạy chung VM với app (service `postgres` trong compose.prod).
+- Deploy chạy tay bằng `deploy.sh <tag>`; không dùng systemd timer tự kéo.
+- IT đã bàn giao VM; giá trị thật nằm ở docs/internal/ hoặc trên VM, agent không cần và không được ghi vào repo.
+
+## Phạm vi đã được chủ dự án duyệt
+1. `infra/compose.prod.yml`:
+   - Services: `proxy` (Nginx, ưu tiên image chạy non-root, pin tag đầy đủ), `web`, `api`, `worker`,
+     `migrate` (one-off `alembic upgrade head`), `postgres:17.11-alpine`,
+     `valkey/valkey:9.1.2-alpine` (AOF `appendfsync everysec`).
+   - Image app pin theo DIGEST (`ghcr.io/...@sha256:...`) đọc từ file `release.env`, không dùng `latest`.
+   - Chỉ proxy publish cổng 443 (và 80 → redirect 443). postgres/valkey/api/worker/web chỉ ở network nội bộ.
+   - Mọi service: healthcheck, `restart: unless-stopped`, giới hạn CPU/RAM, log driver json-file có max-size/max-file,
+     user không phải root, `read_only: true` + tmpfs khi image cho phép, `no-new-privileges`.
+   - Không có `beat`, `mailpit`, backup (ngoài phạm vi).
+2. Nginx (`infra/nginx/`): chứng chỉ mount từ `/etc/pace-ai-hub/tls/`; TLS 1.2+; HSTS; ẩn version (`server_tokens off`).
+   Route: `/api/`, `/healthz`, `/readyz` → api:8000; còn lại → web:3000. Truyền `X-Request-ID`, `X-Forwarded-*`.
+   Access log KHÔNG ghi header Authorization/Cookie hay query string nhạy cảm.
+3. Cấu hình trên VM (KHÔNG commit): `/etc/pace-ai-hub/` gồm `app.env`, `db.env`, `release.env`, `tls/`,
+   `ghcr.token`. Quyền `root:pace 0640`, riêng `ghcr.token` 0600. Trong repo chỉ có `infra/prod.env.example`
+   liệt kê TÊN biến; domain dùng placeholder `pilot.example.invalid` (ADR-016).
+4. `deploy/deploy.sh <tag>` (bash, `set -euo pipefail`):
+   docker login ghcr.io bằng `--password-stdin` từ `/etc/pace-ai-hub/ghcr.token` → resolve digest cho tag →
+   ghi `release.env` → `docker compose pull` → chạy `migrate` → `up -d` → chờ `https://$PACE_DOMAIN/readyz`
+   (timeout cấu hình được) → smoke: `/healthz` 200, `/readyz` = ready, trang web 200, worker trả `pong` →
+   ghi một dòng vào `/var/lib/pace-ai-hub/releases.log` (thời gian UTC, tag, digest, người chạy).
+   Lỗi ở bất kỳ bước nào: exit ≠ 0, KHÔNG ghi releases.log là thành công, in lệnh rollback.
+5. `deploy/rollback.sh <tag-trước>`: deploy lại image cũ; KHÔNG chạy alembic downgrade (chỉ in hướng dẫn,
+   downgrade DB phải có người xác nhận).
+6. `deploy/check-egress.sh`: gọi được `api.anthropic.com`, `login.microsoftonline.com`, `graph.microsoft.com`,
+   `ghcr.io`; một host ngoài allowlist (ví dụ `example.com`) phải BỊ CHẶN. In bảng kết quả, exit ≠ 0 nếu sai.
+7. `deploy/check-image-secrets.sh`: `docker history --no-trunc` + trivy secret scan trên 3 image; fail nếu thấy secret.
+8. CI: thêm job `deploy-smoke` vào `.github/workflows/ci.yml` (khớp quy tắc bảo mật đã có trong PR-C:
+   action pin SHA, `permissions: contents: read`, không secret, có timeout):
+   build image local → tạo chứng chỉ self-signed → env giả (mật khẩu `openssl rand -hex 16`) →
+   `docker compose -f infra/compose.prod.yml up -d --wait` → chạy đúng các smoke test của deploy.sh
+   (cho phép `--insecure` CHỈ trong job này vì chứng chỉ self-signed) → `down -v`.
+   Thêm `shellcheck` cho mọi file trong `deploy/` và `nginx -t` cho cấu hình proxy.
+9. Runbook: `docs/runbooks/deploy-vm.md` (cài lần đầu: user `pace`, Docker, thư mục /etc/pace-ai-hub,
+   `git clone` qua HTTPS, tạo mật khẩu DB bằng `openssl rand`, đặt PAT GHCR; deploy; rollback; xoay PAT;
+   đổi sang deploy key trước khi repo private; đọc log; xử lý /readyz 503) và `docs/runbooks/vm-egress.md`.
+   Giá trị thật (domain, IP, đường dẫn) chỉ ghi ở `docs/internal/` (gitignored) hoặc trên VM.
+10. Cập nhật docs/traceability.md (INF-01 → INF-01c), ADR-013 Phụ lục A (version Nginx và các tool mới),
+    docs/plan/INF-01_STEPS.md (đánh dấu Bước 5 khi PR mở).
+
+Ngoài phạm vi (KHÔNG làm): backup/restore + systemd timer (INF-01b, Phase 4); beat (RUN-01); Entra/redirect URI
+(AUTH-01); Wazuh/giám sát (INF-01b); self-hosted runner hay deploy tự động từ GitHub vào mạng nội bộ
+(ADR-015/016); sửa code trong apps/* (nếu cần, DỪNG và báo tôi).
+
+## Quy tắc bắt buộc
+- Version: tra registry/Docker Hub/GitHub Releases tại thời điểm làm (Nginx, shellcheck, trivy, actions),
+  KHÔNG ghi theo trí nhớ. Liệt kê bảng version + digest/SHA trong plan.
+- Hỏi tôi trước khi thêm dependency/tool ngoài danh sách trên.
+- KHÔNG chạy bất kỳ lệnh nào trên VM thật. Agent chỉ viết script + runbook; người giữ vai DevOps-Sec chạy trên VM
+  và gửi output lại.
+- Repo PUBLIC (ADR-016): không ghi domain, hostname, IP, tenant ID, đường dẫn backup, token thật vào bất kỳ file
+  tracked nào, kể cả mô tả PR và commit message. Chỉ dùng placeholder `*.example.invalid`.
+- Không tắt kiểm tra TLS ngoài job `deploy-smoke` (10-security.md).
+- Code, commit tiếng Anh, conventional commits + story ID, ví dụ
+  `feat(infra): prod compose, pull-based deploy and rollback scripts [INF-01c]`. Không tự merge (ADR-011).
+
+## Plan cần trả về (trước khi code)
+1. Kết quả kiểm tra điều kiện trước (PR-B, PR-C, image trên GHCR).
+2. Bảng version/digest của image và tool.
+3. Danh sách file tạo/sửa.
+4. Sơ đồ mạng compose.prod (service nào ở network nào, cổng nào publish).
+5. Acceptance criteria Given/When/Then, tối thiểu:
+   - Given VM cài theo runbook và có tag trên GHCR, when chạy `deploy.sh <tag>`, then mọi service healthy,
+     `/healthz` 200, `/readyz` ready qua HTTPS, web hiển thị, releases.log có dòng mới.
+   - Given migration hoặc /readyz lỗi, when deploy.sh chạy, then exit ≠ 0, in lệnh rollback, không ghi thành công.
+   - Given bản trước đang chạy, when `rollback.sh <tag-trước>`, then app về image cũ, DB không bị downgrade.
+   - Given một máy khác trong mạng nội bộ, when quét cổng VM, then chỉ 80/443 mở.
+   - Given egress đã cấu hình, when `check-egress.sh`, then allowlist gọi được, host khác bị chặn.
+   - Given PR đổi infra/ hoặc deploy/, when CI chạy, then `deploy-smoke`, shellcheck và `nginx -t` xanh.
+   - Given diff của PR, when review, then không có giá trị hạ tầng thật; gitleaks xanh.
+6. Câu hỏi còn lại cho chủ dự án/IT (nếu có).
+7. Rủi ro và giới hạn.
+
+## Định nghĩa xong (DoD)
+- Đã chạy thật và dán output: shellcheck, `nginx -t`, `docker compose -f infra/compose.prod.yml config`,
+  link run CI có `deploy-smoke` xanh.
+- Mô tả PR có mục "Checklist chạy trên VM" cho DevOps-Sec: cài lần đầu → `check-egress.sh` → `deploy.sh <tag>` →
+  quét cổng → `rollback.sh` → `deploy.sh` lại; mỗi bước ghi rõ output mong đợi để đối chiếu AC
+  (khớp docs/plan/INF-01_STEPS.md, Bước 6).
+- Chưa có output thật từ VM thì ghi rõ AC 1–5 "chưa kiểm chứng trên VM", không ghi "done".
 ```
 ```
 /pace-story-kickoff DB-01
