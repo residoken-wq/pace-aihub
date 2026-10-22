@@ -1,0 +1,45 @@
+# Pre-commit configuration for PACE AI Hub
+# Run with: uvx pre-commit run --all-files
+# Note on Prettier: Not yet added to repo dependencies. Listed as recommendation in PR-C.
+
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
+
+repos:
+  # Ruff linter & formatter (Python)
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.17.1"
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  # Gitleaks secret detection
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: "v8.30.1"
+    hooks:
+      - id: gitleaks
+
+  # Local hooks for mypy (API and Worker) and ESLint (Web)
+  - repo: local
+    hooks:
+      - id: mypy-api
+        name: mypy (apps/api)
+        language: system
+        entry: uv run --directory apps/api mypy
+        types: [python]
+        pass_filenames: false
+
+      - id: mypy-worker
+        name: mypy (apps/worker)
+        language: system
+        entry: uv run --directory apps/worker mypy
+        types: [python]
+        pass_filenames: false
+
+      - id: eslint-web
+        name: eslint (apps/web)
+        language: system
+        entry: pnpm -C apps/web lint
+        files: ^apps/web/
+        pass_filenames: false

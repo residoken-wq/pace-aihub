@@ -1,0 +1,10 @@
+# PACE AI Hub - Code Owners
+# Default owner (decision 20/10/2026, ADR-011)
+* @residoken-wq
+
+# Sensitive paths (reserved for dedicated approvers when team scales)
+.github/                @residoken-wq
+infra/                  @residoken-wq
+apps/api/app/gateway/   @residoken-wq
+apps/api/migrations/    @residoken-wq
+docs/adr/               @residoken-wq

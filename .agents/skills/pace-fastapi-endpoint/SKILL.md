@@ -19,10 +19,13 @@ async def create_run(
     user: User = Depends(current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    tool = await tools_repo.get_for_user(db, tool_id, user.id)        # 404 if not visible
-    await require_role(db, user.id, tool.workspace_id, Role.member)    # 403 WORKSPACE_FORBIDDEN
-    run = await runs_service.enqueue(db, tool, body.tool_version_id,
-                                     body.mode, body.idempotency_key, user)  # 409 DUPLICATE_RUN
+    tool = await tools_repo.get_for_user(db, tool_id, user.id)  # 404 if not visible
+    await require_role(
+        db, user.id, tool.workspace_id, Role.member
+    )  # 403 WORKSPACE_FORBIDDEN
+    run = await runs_service.enqueue(
+        db, tool, body.tool_version_id, body.mode, body.idempotency_key, user
+    )  # 409 DUPLICATE_RUN
     return RunAccepted(run_id=run.id, status=run.status)
 ```
 4. Tests (`tests/api/test_<domain>.py`, real Postgres via testcontainers): 201/202 happy path · 401 no session · 403 member of other workspace · 422 invalid body · domain error codes (409/429…) · idempotent replay returns same resource · audit row written.

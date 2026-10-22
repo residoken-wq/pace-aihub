@@ -51,6 +51,29 @@ pnpm -C apps/web e2e
 ```
 Test có marker `integration` dùng testcontainers (Postgres 17, Valkey 9.1). Không có Docker thì tự skip; CI luôn chạy chúng.
 
+## Pre-commit hook
+Repo cấu hình pre-commit kiểm tra format (Ruff), typing (mypy), lint (ESLint) và phát hiện rò rỉ bí mật (Gitleaks).
+Chạy kiểm tra thủ công toàn bộ file:
+```bash
+uvx pre-commit run --all-files
+```
+Cài đặt hook tự động chạy trước mỗi lệnh `git commit`:
+```bash
+uvx pre-commit install
+```
+*(Lưu ý: Prettier chưa có trong dependencies repo, format code web tuân thủ ESLint).*
+
+## Cách đọc kết quả CI trên GitHub Actions
+Pipeline CI (`.github/workflows/ci.yml`) chạy tự động trên mỗi Pull Request và mỗi lần push vào `main`:
+1. **API Quality & Tests (`api`)**: Kiểm tra ruff check/format, mypy, pytest. Chú ý log pytest phải có **0 skipped** (toàn bộ integration test với Postgres và Valkey containers phải pass).
+2. **Worker Quality & Tests (`worker`)**: Tương tự API, kiểm tra celery tasks và Valkey integration tests (**0 skipped**).
+3. **Database Migrations (`migrations`)**: Chạy độc lập `alembic upgrade head -> downgrade base -> upgrade head` trên container Postgres sạch để đảm bảo migration có thể rollback an toàn.
+4. **API Contracts Sync (`contracts`)**: Chạy `pnpm contracts:gen` và so sánh `git diff`. Nếu có endpoint thay đổi mà quên gen contracts, job này sẽ fail.
+5. **Web Quality & Build (`web`)**: Chạy `eslint`, `tsc --noEmit`, Vitest và standalone `next build`.
+6. **Security Scans (`security`)**: Quét toàn bộ lịch sử git bằng Gitleaks CLI, kiểm tra CVE với `pnpm audit --prod` và `pip-audit`.
+7. **End-to-End Tests (`e2e`)**: Khởi động stack docker compose dev với mật khẩu ngẫu nhiên, chạy Playwright e2e test. Nếu có lỗi, tải artifact `playwright-report` từ trang tóm tắt của Action run để xem trace và screenshot.
+
 ## Sự cố thường gặp
 - `/readyz` trả 503: xem trường `checks` để biết Postgres hay Valkey đang `down`. Log API ghi `readiness_check_failed` kèm loại lỗi, không ghi chuỗi kết nối.
 - `pnpm` báo sai phiên bản: chạy `corepack enable` để dùng đúng bản trong `packageManager`.
+- Pre-commit hoặc testcontainers báo lỗi Docker: đảm bảo Docker daemon đang chạy (`docker info`). Trên Windows với WSL2, đảm bảo Docker socket có thể kết nối.
