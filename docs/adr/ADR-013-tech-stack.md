@@ -205,3 +205,18 @@ Tra trực tiếp từ PyPI, npm, Docker Hub và nodejs.org lúc dựng khung. Q
 | Playwright (@playwright/test) | `1.64.1` | E2E smoke test theo bảng mục 2 |
 | shadcn CLI | `4.22.1` | Khởi tạo component primitives Tailwind v4 |
 | Node.js Docker web image | `node:24.22.1-alpine3.24` | Multi-stage standalone runner |
+| Gitleaks (CLI) | `8.30.1` | Quét secret, pin binary + checksum SHA256 |
+| Trivy / trivy-action | `0.76.1` / `0.36.0` (`ed142fd0...`) | Quét CVE image container, fail khi có HIGH/CRITICAL |
+| pip-audit | `2.10.1` | Quét CVE dependencies Python (apps/api, apps/worker) |
+| actionlint | `1.7.12` | Static analysis cho workflow GitHub Actions |
+| pre-commit / ruff-pre-commit | `4.7.0` / `v0.17.1` | Quản lý git pre-commit hook qua uvx |
+| actions/checkout | `v7.0.1` (`3d3c42e5...`) | Pin full commit SHA |
+| astral-sh/setup-uv | `v10.3.2` (`07a047e6...`) | Pin uv 0.13.3 + cache |
+| actions/setup-python | `v7.1.0` (`6d4fd22b...`) | Python 3.12 |
+| pnpm/action-setup | `v6.1.0` (`ea17c68d...`) | pnpm 12.14.0 |
+| actions/setup-node | `v7.1.0` (`949feb24...`) | Node.js 24 LTS |
+| actions/upload-artifact | `v7.0.2` (`cf430e03...`) | Artifact uploader |
+| docker/setup-buildx-action | `v4.4.1` (`f87e5991...`) | Docker buildx |
+| docker/login-action | `v4.6.0` (`dbcb8138...`) | Đăng nhập GHCR bằng GITHUB_TOKEN |
+| docker/build-push-action | `v7.4.0` (`c3c9e263...`) | Build & push GHCR |
+| actions/attest-build-provenance | `v4.2.2` (`4d101475...`) | SLSA build provenance attestation |

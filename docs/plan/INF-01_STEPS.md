@@ -27,11 +27,11 @@
   - không làm phần của UI-00 (tokens, AppShell, next-intl) và AUTH-01;
   - có AC Given/When/Then.
 - [ ] PR có output thật: lint, typecheck, vitest, build, compose, Playwright; screenshot 1440px và 390px.
-- [ ] Merge vào `main`. PR: ____
+- [x] Merge vào `main`. PR: #7 (residoken-wq/pace-aihub#7)
 
 ## Bước 2: PR-C, CI/CD (Fullstack/DevOps-Sec + Antigravity)
-- [ ] Chỉ chạy prompt "PR-C" **sau khi PR-B đã merge**.
-- [ ] Duyệt plan, kiểm tra:
+- [x] Chỉ chạy prompt "PR-C" **sau khi PR-B đã merge** (PR #7 đã merge ngày 22/10/2026).
+- [x] Duyệt plan, kiểm tra:
   - có bảng action kèm commit SHA;
   - không dùng `pull_request_target`, không dùng `paths:` ở cấp workflow;
   - gitleaks dùng bản CLI, không dùng action.
