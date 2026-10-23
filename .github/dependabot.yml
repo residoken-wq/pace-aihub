@@ -56,8 +56,8 @@ updates:
         patterns: ["*"]
         update-types: ["minor", "patch"]
 
-  # apps/api Python (uv / pip)
-  - package-ecosystem: "pip"
+  # apps/api Python (uv)
+  - package-ecosystem: "uv"
     directory: "/apps/api"
     schedule:
       interval: "weekly"
@@ -70,8 +70,8 @@ updates:
         patterns: ["*"]
         update-types: ["minor", "patch"]
 
-  # apps/worker Python (uv / pip)
-  - package-ecosystem: "pip"
+  # apps/worker Python (uv)
+  - package-ecosystem: "uv"
     directory: "/apps/worker"
     schedule:
       interval: "weekly"
