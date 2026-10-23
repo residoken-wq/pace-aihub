@@ -118,7 +118,7 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "pg_isready -U test_user"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -147,6 +147,7 @@ jobs:
         working-directory: apps/api
         env:
           PACE_DATABASE_URL: postgresql+asyncpg://test_user:test_pass_${{ github.run_id }}@127.0.0.1:5432/pace_migration_test
+          PACE_VALKEY_URL: redis://127.0.0.1:6379/0
           PACE_ENV: dev
         run: |
           uv run alembic upgrade head
